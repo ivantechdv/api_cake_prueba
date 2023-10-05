@@ -115,4 +115,95 @@ class ViewController extends AppController
             }
         }
     }
+    public function edit($id = null)
+    {
+        //$this->autoRender = false;
+        // Configurar el cliente HTTP
+        $http = new Client();
+
+        // Configurar las cabeceras para indicar que estamos enviando JSON
+        $headers = [
+            'Accept' => 'application/json',
+        ];
+
+        // Realizar una solicitud POST a la URL deseada
+        $response = $response = $http->get('http://localhost/api_cake_prueba/api/personas/' . $id, [], [
+            'headers' => $headers,
+        ]);
+
+        // echo '<pre>';
+        // print_r($response);
+        // exit;
+
+        // Verificar si la solicitud fue exitosa
+        if ($response->isOk()) {
+            // Obtener la respuesta JSON del servidor
+            $jsonResponse = (string) $response->getBody();
+
+            // Decodificar la respuesta JSON en un arreglo asociativo
+            $result = json_decode($jsonResponse, true);
+
+            // Ahora $result contiene la respuesta del servidor, que puede incluir un mensaje de éxito o error
+
+            $this->response = $this->response->withStringBody($jsonResponse);
+            // Retornar la respuesta
+
+            $this->set(compact('result'));
+        } else {
+            // La solicitud no fue exitosa, manejar el error aquí
+            $errorResponse = ['message' => 'Hubo un error al enviar los datos.'];
+
+            return $errorResponse;
+        }
+    }
+
+    public function update($id = null)
+    {
+        $this->autoRender = false;
+        if ($this->request->is('put')) { // Cambia 'put' según el método HTTP necesario (PUT, PATCH, etc.)
+            // Obtener los datos enviados desde la vista
+            $data = $this->request->getData();
+
+
+            // Configurar el cliente HTTP
+            $http = new Client();
+
+            // Configurar las cabeceras para indicar que estamos enviando JSON
+            $headers = [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ];
+
+            // Convertir los datos a formato JSON
+            $jsonData = json_encode($data);
+
+            // Obtener el ID del recurso que deseas actualizar (cambia 'id' por el nombre correcto)
+            $resourceId = $id; // Asegúrate de ajustar esto según cómo se envíe el ID
+
+            // Realizar una solicitud PUT a la URL deseada con el ID del recurso
+            $response = $http->put('http://localhost/api_cake_prueba/api/personas/' . $resourceId, $jsonData, [
+                'headers' => $headers,
+            ]);
+
+
+            // Verificar si la solicitud fue exitosa
+            if ($response->isOk()) {
+                // Obtener la respuesta JSON del servidor
+                $jsonResponse = (string) $response->getBody();
+
+                // Decodificar la respuesta JSON en un arreglo asociativo
+                $result = json_decode($jsonResponse, true);
+
+                // Ahora $result contiene la respuesta del servidor, que puede incluir un mensaje de éxito o error
+
+                $this->response = $this->response->withStringBody($jsonResponse);
+                // Retornar la respuesta
+                return $this->response;
+            } else {
+                // La solicitud no fue exitosa, manejar el error aquí
+                $errorResponse = ['message' => 'Hubo un error al enviar los datos.'];
+                return json_decode($errorResponse);
+            }
+        }
+    }
 }

@@ -58,4 +58,33 @@ class PersonasController extends AppController
         ]);
         $this->viewBuilder()->setOption('serialize', ['message', 'persona']);
     }
+    public function edit($id = null)
+    {
+        $this->request->allowMethod(['put']); // Solo permitir solicitudes PUT
+
+        $data = $this->request->input('json_decode', true);
+        $resourceId = $id; // Suponiendo que el ID se pasa en los datos JSON
+
+        // Buscar la entidad existente por ID
+        $persona = $this->Personas->get($resourceId);
+
+        // Patchear (actualizar) la entidad con los nuevos datos
+        $persona = $this->Personas->patchEntity($persona, $data);
+
+        if ($this->Personas->save($persona)) {
+            $statusCode = '200';
+            $message = 'La persona ha sido actualizada correctamente.';
+        } else {
+            $statusCode = '401';
+            $message = 'No se pudo actualizar la persona. Por favor, inténtelo de nuevo.';
+        }
+
+        $this->viewBuilder()->setClassName('Json');
+        $this->set([
+            'statusCode' => $statusCode,
+            'message' => $message,
+            'persona' => $persona, // Puede ser útil devolver la entidad actualizada
+        ]);
+        $this->viewBuilder()->setOption('serialize', ['message', 'persona']);
+    }
 }

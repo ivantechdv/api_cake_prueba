@@ -54,8 +54,8 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
         $builder->connect('/view/add', ['controller' => 'View', 'action' => 'add', 'home']);
-
-
+        $builder->connect('/view/edit', ['controller' => 'View', 'action' => 'edit', 'home']);
+        $builder->connect('/view/update', ['controller' => 'View', 'action' => 'update', 'home']);
         //RESOURCES API 
 
 
